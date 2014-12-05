@@ -9,4 +9,10 @@ categories:   [Media]
 languages:    [Java]
 solutions:    [Mobile]
 github:       android-Camera2Video
+level:        ADVANCED
+icon:         screenshots/icon-web.png
+apiRefs:
+    - android:android.hardware.camera2.CameraCaptureSession
+    - android:android.hardware.camera2.CameraDevice
+    - android:android.view.TextureView
 license: apache2
