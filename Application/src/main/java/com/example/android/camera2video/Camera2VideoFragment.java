@@ -533,14 +533,21 @@ public class Camera2VideoFragment extends Fragment implements View.OnClickListen
         mIsRecordingVideo = false;
         mButtonVideo.setText(R.string.record);
         // Stop recording
-        mMediaRecorder.stop();
-        mMediaRecorder.reset();
+        //mMediaRecorder.stop();
+        //mMediaRecorder.reset();
         Activity activity = getActivity();
         if (null != activity) {
             Toast.makeText(activity, "Video saved: " + getVideoFile(activity),
                     Toast.LENGTH_SHORT).show();
         }
-        startPreview();
+        //startPreview();
+
+        // Workaround for https://github.com/googlesamples/android-Camera2Video/issues/2
+        // Thanks to commit from pjcollins on xamarin monodroid
+        // https://github.com/xamarin/monodroid-samples/commit/3bb7d67f1d12698a63d3ae16247a54a2c9c16e4e
+
+        closeCamera();
+        openCamera(mTextureView.getWidth(), mTextureView.getHeight());
     }
 
     /**
