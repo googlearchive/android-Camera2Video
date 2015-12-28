@@ -57,10 +57,13 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -611,10 +614,21 @@ public class Camera2VideoFragment extends Fragment
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
+
         Activity activity = getActivity();
         if (null != activity) {
-            Toast.makeText(activity, "Video saved: " + getVideoFile(activity),
-                    Toast.LENGTH_SHORT).show();
+            File videoFile = getVideoFile(activity);
+
+            String fileName = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss", Locale.CANADA).format(new Date()) + ".mp4";
+            File renamedVideoFile = new File(activity.getExternalFilesDir(null), fileName);
+
+            if(videoFile.getParentFile().exists() &&
+                    videoFile.exists() &&
+                    videoFile.renameTo(renamedVideoFile)){
+                        Toast.makeText(activity, "Video saved: " + renamedVideoFile,
+                            Toast.LENGTH_SHORT).show();
+            }
+
         }
         startPreview();
     }
