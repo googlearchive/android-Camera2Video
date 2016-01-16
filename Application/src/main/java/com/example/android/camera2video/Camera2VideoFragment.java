@@ -588,9 +588,21 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private File getVideoFile(Context context) {
-        return new File(context.getExternalFilesDir(null), "video.mp4");
-    }
+        String oldFileName = "video.mp4";
+        String newFileName = "newVideo.mp4";
+        File oldFile =  new File(context.getExternalFilesDir(null), oldFileName);
+        File newFile =  new File(context.getExternalFilesDir(null), newFileName);
 
+        if(oldFile.exists() && newFile.exists()) {
+            newFile.renameTo(oldFile);
+            return new File(context.getExternalFilesDir(null), newFileName);
+        }
+        else if(oldFile.exists()) {
+            return new File(context.getExternalFilesDir(null), newFileName);
+        } else {
+            return oldFile;
+        }
+    }
     private void startRecordingVideo() {
         try {
             // UI
@@ -613,7 +625,7 @@ public class Camera2VideoFragment extends Fragment
         mMediaRecorder.reset();
         Activity activity = getActivity();
         if (null != activity) {
-            Toast.makeText(activity, "Video saved: " + getVideoFile(activity),
+            Toast.makeText(activity, "Video saved!",
                     Toast.LENGTH_SHORT).show();
         }
         startPreview();
