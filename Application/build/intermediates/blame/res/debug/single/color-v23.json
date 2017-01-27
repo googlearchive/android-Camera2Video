@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_default.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_default.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_btn_checkable.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_switch_thumb.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_color_highlight_material.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_color_highlight_material.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_switch_track.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_seek_thumb.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_spinner.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_spinner.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_btn_colored_borderless_text_material.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_btn_colored_borderless_text_material.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\color-v23\\abc_tint_edittext.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\color-v23\\abc_tint_edittext.xml"
+    }
+]

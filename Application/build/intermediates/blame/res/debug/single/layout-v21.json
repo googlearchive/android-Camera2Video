@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\layout-v21\\notification_template_custom_big.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\layout-v21\\notification_template_custom_big.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\layout-v21\\notification_action_tombstone.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\layout-v21\\notification_action_tombstone.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\layout-v21\\notification_action.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\layout-v21\\notification_action.xml"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\layout-v21\\notification_template_icon_group.xml",
+        "source": "E:\\android-Camera2Video\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\25.0.1\\res\\layout-v21\\notification_template_icon_group.xml"
+    }
+]

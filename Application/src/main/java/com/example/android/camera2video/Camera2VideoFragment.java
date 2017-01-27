@@ -676,8 +676,24 @@ public class Camera2VideoFragment extends Fragment
         mIsRecordingVideo = false;
         mButtonVideo.setText(R.string.record);
         // Stop recording
-        mMediaRecorder.stop();
-        mMediaRecorder.reset();
+
+        try {
+            mPreviewSession.stopRepeating();
+            mPreviewSession.abortCaptures();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                if (mMediaRecorder != null) {
+                    mMediaRecorder.stop();
+                    mMediaRecorder.reset();
+                }
+            }
+        };
+        thread.start();
 
         Activity activity = getActivity();
         if (null != activity) {
