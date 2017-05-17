@@ -55,9 +55,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -106,7 +106,7 @@ public class Camera2VideoFragment extends Fragment
     private Button mButtonVideo;
 
     /**
-     * A refernce to the opened {@link android.hardware.camera2.CameraDevice}.
+     * A reference to the opened {@link android.hardware.camera2.CameraDevice}.
      */
     private CameraDevice mCameraDevice;
 
@@ -187,7 +187,7 @@ public class Camera2VideoFragment extends Fragment
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
-        public void onOpened(CameraDevice cameraDevice) {
+        public void onOpened(@NonNull CameraDevice cameraDevice) {
             mCameraDevice = cameraDevice;
             startPreview();
             mCameraOpenCloseLock.release();
@@ -197,14 +197,14 @@ public class Camera2VideoFragment extends Fragment
         }
 
         @Override
-        public void onDisconnected(CameraDevice cameraDevice) {
+        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
             mCameraOpenCloseLock.release();
             cameraDevice.close();
             mCameraDevice = null;
         }
 
         @Override
-        public void onError(CameraDevice cameraDevice, int error) {
+        public void onError(@NonNull CameraDevice cameraDevice, int error) {
             mCameraOpenCloseLock.release();
             cameraDevice.close();
             mCameraDevice = null;
@@ -218,7 +218,6 @@ public class Camera2VideoFragment extends Fragment
     private Integer mSensorOrientation;
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
-    private Surface mRecorderSurface;
 
     public static Camera2VideoFragment newInstance() {
         return new Camera2VideoFragment();
@@ -254,7 +253,7 @@ public class Camera2VideoFragment extends Fragment
      */
     private static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
         // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<Size>();
+        List<Size> bigEnough = new ArrayList<>();
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
@@ -413,6 +412,7 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Tries to open a {@link CameraDevice}. The result is listened by `mStateCallback`.
      */
+    @SuppressWarnings("MissingPermission")
     private void openCamera(int width, int height) {
         if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
             requestVideoPermissions();
@@ -435,6 +435,9 @@ public class Camera2VideoFragment extends Fragment
             StreamConfigurationMap map = characteristics
                     .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            if (map == null) {
+                throw new RuntimeException("Cannot get available preview/video sizes");
+            }
             mVideoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
             mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                     width, height, mVideoSize);
@@ -497,22 +500,23 @@ public class Camera2VideoFragment extends Fragment
             Surface previewSurface = new Surface(texture);
             mPreviewBuilder.addTarget(previewSurface);
 
-            mCameraDevice.createCaptureSession(Arrays.asList(previewSurface), new CameraCaptureSession.StateCallback() {
+            mCameraDevice.createCaptureSession(Collections.singletonList(previewSurface),
+                    new CameraCaptureSession.StateCallback() {
 
-                @Override
-                public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-                    mPreviewSession = cameraCaptureSession;
-                    updatePreview();
-                }
+                        @Override
+                        public void onConfigured(@NonNull CameraCaptureSession session) {
+                            mPreviewSession = session;
+                            updatePreview();
+                        }
 
-                @Override
-                public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-                    Activity activity = getActivity();
-                    if (null != activity) {
-                        Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }, mBackgroundHandler);
+                        @Override
+                        public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                            Activity activity = getActivity();
+                            if (null != activity) {
+                                Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -600,7 +604,8 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private String getVideoFilePath(Context context) {
-        return context.getExternalFilesDir(null).getAbsolutePath() + "/"
+        final File dir = context.getExternalFilesDir(null);
+        return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
                 + System.currentTimeMillis() + ".mp4";
     }
 
@@ -623,9 +628,9 @@ public class Camera2VideoFragment extends Fragment
             mPreviewBuilder.addTarget(previewSurface);
 
             // Set up Surface for the MediaRecorder
-            mRecorderSurface = mMediaRecorder.getSurface();
-            surfaces.add(mRecorderSurface);
-            mPreviewBuilder.addTarget(mRecorderSurface);
+            Surface recorderSurface = mMediaRecorder.getSurface();
+            surfaces.add(recorderSurface);
+            mPreviewBuilder.addTarget(recorderSurface);
 
             // Start a capture session
             // Once the session starts, we can update the UI and start recording
@@ -656,9 +661,7 @@ public class Camera2VideoFragment extends Fragment
                     }
                 }
             }, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (CameraAccessException | IOException e) {
             e.printStackTrace();
         }
 
