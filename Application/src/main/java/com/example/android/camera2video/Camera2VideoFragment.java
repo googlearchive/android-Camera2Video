@@ -678,6 +678,15 @@ public class Camera2VideoFragment extends Fragment
         // UI
         mIsRecordingVideo = false;
         mButtonVideo.setText(R.string.record);
+
+        //Added by @skynetlabz to resolve exception issue when stop recording.
+        try {
+            mPreviewSession.stopRepeating();
+            mPreviewSession.abortCaptures();
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
