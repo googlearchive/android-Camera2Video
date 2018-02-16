@@ -1,6 +1,6 @@
 
-Android Camera2Video Sample
-===================================
+Android Camera2Video Sample (Kotlin)
+====================================
 
 This sample shows how to record video using the new Camera2 API in Android Lollipop.
 
@@ -44,13 +44,14 @@ Pre-requisites
 --------------
 
 - Android SDK 27
-- Android Build Tools v27.0.2
 - Android Support Repository
 
 Screenshots
 -------------
 
-<img src="screenshots/1-launch.png" height="400" alt="Screenshot"/> <img src="screenshots/2-record.png" height="400" alt="Screenshot"/> <img src="screenshots/3-save.png" height="400" alt="Screenshot"/> 
+<img src="screenshots/1-launch.png" height="400" alt="Screenshot"/>
+<img src="screenshots/2-record.png" height="400" alt="Screenshot"/>
+<img src="screenshots/3-save.png" height="400" alt="Screenshot"/>
 
 Getting Started
 ---------------
@@ -73,7 +74,7 @@ submitting a pull request through GitHub. Please see CONTRIBUTING.md for more de
 License
 -------
 
-Copyright 2017 The Android Open Source Project, Inc.
+Copyright 2018 The Android Open Source Project, Inc.
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor
 license agreements.  See the NOTICE file distributed with this work for
