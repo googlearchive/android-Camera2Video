@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi\\ic_launcher.png",
+        "source": "E:\\android-Camera2Video\\Application\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\android-Camera2Video\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi\\ic_action_info.png",
+        "source": "E:\\android-Camera2Video\\Application\\src\\main\\res\\drawable-xxhdpi\\ic_action_info.png"
+    }
+]
