@@ -312,7 +312,7 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onClick(View view) {
-        if (!mRecordingLock.tryAcquire(1)) {
+        if (!mRecordingLock.tryAcquire()) {
             return;
         }
         switch (view.getId()) {
