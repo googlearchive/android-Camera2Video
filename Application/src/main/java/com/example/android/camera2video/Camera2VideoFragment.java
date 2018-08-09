@@ -182,6 +182,12 @@ public class Camera2VideoFragment extends Fragment
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
     /**
+     * A {@link Semaphore} to prevent the app from starting/stopping recording
+     * before the {@link MediaRecorder} is ready.
+     */
+    private Semaphore mRecordingLock = new Semaphore(1);
+
+    /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
      */
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
@@ -306,6 +312,9 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onClick(View view) {
+        if (!mRecordingLock.tryAcquire(1)) {
+            return;
+        }
         switch (view.getId()) {
             case R.id.video: {
                 if (mIsRecordingVideo) {
@@ -610,60 +619,61 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void startRecordingVideo() {
-        if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSize) {
-            return;
-        }
-        try {
-            closePreviewSession();
-            setUpMediaRecorder();
-            SurfaceTexture texture = mTextureView.getSurfaceTexture();
-            assert texture != null;
-            texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-            mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-            List<Surface> surfaces = new ArrayList<>();
+            if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSize) {
+                return;
+            }
+            try {
+                closePreviewSession();
+                setUpMediaRecorder();
+                SurfaceTexture texture = mTextureView.getSurfaceTexture();
+                assert texture != null;
+                texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
+                List<Surface> surfaces = new ArrayList<>();
 
-            // Set up Surface for the camera preview
-            Surface previewSurface = new Surface(texture);
-            surfaces.add(previewSurface);
-            mPreviewBuilder.addTarget(previewSurface);
+                // Set up Surface for the camera preview
+                Surface previewSurface = new Surface(texture);
+                surfaces.add(previewSurface);
+                mPreviewBuilder.addTarget(previewSurface);
 
-            // Set up Surface for the MediaRecorder
-            Surface recorderSurface = mMediaRecorder.getSurface();
-            surfaces.add(recorderSurface);
-            mPreviewBuilder.addTarget(recorderSurface);
+                // Set up Surface for the MediaRecorder
+                Surface recorderSurface = mMediaRecorder.getSurface();
+                surfaces.add(recorderSurface);
+                mPreviewBuilder.addTarget(recorderSurface);
 
-            // Start a capture session
-            // Once the session starts, we can update the UI and start recording
-            mCameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
+                // Start a capture session
+                // Once the session starts, we can update the UI and start recording
+                mCameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
 
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    mPreviewSession = cameraCaptureSession;
-                    updatePreview();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // UI
-                            mButtonVideo.setText(R.string.stop);
-                            mIsRecordingVideo = true;
+                    @Override
+                    public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        mPreviewSession = cameraCaptureSession;
+                        updatePreview();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // UI
+                                mButtonVideo.setText(R.string.stop);
+                                mIsRecordingVideo = true;
+                                mRecordingLock.release();
 
-                            // Start recording
-                            mMediaRecorder.start();
-                        }
-                    });
-                }
-
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Activity activity = getActivity();
-                    if (null != activity) {
-                        Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+                                // Start recording
+                                mMediaRecorder.start();
+                            }
+                        });
                     }
-                }
-            }, mBackgroundHandler);
-        } catch (CameraAccessException | IOException e) {
-            e.printStackTrace();
-        }
+
+                    @Override
+                    public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        Activity activity = getActivity();
+                        if (null != activity) {
+                            Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, mBackgroundHandler);
+            } catch (CameraAccessException | IOException e) {
+                e.printStackTrace();
+            }
 
     }
 
@@ -675,21 +685,29 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void stopRecordingVideo() {
-        // UI
-        mIsRecordingVideo = false;
-        mButtonVideo.setText(R.string.record);
-        // Stop recording
-        mMediaRecorder.stop();
-        mMediaRecorder.reset();
-
-        Activity activity = getActivity();
-        if (null != activity) {
-            Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
-                    Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
-        }
-        mNextVideoAbsolutePath = null;
-        startPreview();
+            // UI
+            mIsRecordingVideo = false;
+            mButtonVideo.setText(R.string.record);
+            Activity activity = getActivity();
+            // Stop recording
+            try {
+                mMediaRecorder.stop();
+                if (null != activity) {
+                    Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
+                            Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
+                }
+            } catch (RuntimeException e) {
+                new File(mNextVideoAbsolutePath).delete();
+                e.printStackTrace();
+                Toast.makeText(activity, "No valid audio/video data: " + mNextVideoAbsolutePath,
+                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "No valid audio/video data: " + mNextVideoAbsolutePath);
+            }
+            mMediaRecorder.reset();
+            mNextVideoAbsolutePath = null;
+            startPreview();
+            mRecordingLock.release();
     }
 
     /**
