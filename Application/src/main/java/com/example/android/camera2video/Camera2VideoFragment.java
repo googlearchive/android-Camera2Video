@@ -299,8 +299,6 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onPause() {
-        closeCamera();
-        stopBackgroundThread();
         super.onPause();
     }
 
@@ -449,7 +447,9 @@ public class Camera2VideoFragment extends Fragment
                 mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
             }
             configureTransform(width, height);
-            mMediaRecorder = new MediaRecorder();
+            if (mMediaRecorder == null) {
+                mMediaRecorder = new MediaRecorder();
+            }
             manager.openCamera(cameraId, mStateCallback, null);
         } catch (CameraAccessException e) {
             Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
